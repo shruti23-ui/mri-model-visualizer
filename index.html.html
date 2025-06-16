@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MRI YOLO ViT Architecture</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .title {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .flow-section {
+            margin-bottom: 40px;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .section-title {
+            font-size: 1.8em;
+            color: #34495e;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .flow-row {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .box {
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 10px;
+            text-align: center;
+            min-width: 150px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .data-box { border-color: #3498db; background: linear-gradient(145deg, #ebf3fd, #d4edda); }
+        .model-box { border-color: #9b59b6; background: linear-gradient(145deg, #f8f4fd, #e8d5f0); }
+        .train-box { border-color: #27ae60; background: linear-gradient(145deg, #eafaf1, #d4edda); }
+        .eval-box { border-color: #e67e22; background: linear-gradient(145deg, #fef9e7, #f8e8d4); }
+        
+        .arrow {
+            font-size: 2em;
+            color: #7f8c8d;
+            margin: 0 10px;
+        }
+        .split-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .model-path {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+        }
+        .vit-path {
+            border-left: 5px solid #9b59b6;
+            background: linear-gradient(to right, #f8f4fd, #ffffff);
+        }
+        .yolo-path {
+            border-left: 5px solid #27ae60;
+            background: linear-gradient(to right, #eafaf1, #ffffff);
+        }
+        .model-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+        .params {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .feature {
+            color: #27ae60;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🧠 MRI YOLO ViT Model Architecture</h1>
+        
+        <!-- Data Input Section -->
+        <div class="flow-section">
+            <h2 class="section-title">📊 Data Input & Processing</h2>
+            <div class="flow-row">
+                <div class="box data-box">
+                    <strong>Raw FCD-II Dataset</strong><br>
+                    • 176 Subjects<br>
+                    • T1w & FLAIR MRI<br>
+                    • Multi-plane imaging
+                </div>
+                <div class="arrow">→</div>
+                <div class="box data-box">
+                    <strong>FCDDatasetAdvanced</strong><br>
+                    • BIDS Support<br>
+                    • ROI Extraction<br>
+                    • Slice Selection
+                </div>
+                <div class="arrow">→</div>
+                <div class="box data-box">
+                    <strong>Medical Transforms</strong><br>
+                    • 224×224 Resize<br>
+                    • Augmentation<br>
+                    • Normalization
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Architecture Split -->
+        <div class="flow-section">
+            <h2 class="section-title">🤖 Model Architectures Comparison</h2>
+            <div class="split-container">
+                <!-- Vision Transformer Path -->
+                <div class="model-path vit-path">
+                    <h3 style="color: #9b59b6; text-align: center;">🔍 Vision Transformer</h3>
+                    
+                    <div class="box model-box">
+                        <strong>VisionTransformerClassifier</strong><br>
+                        Pretrained from timm library
+                    </div>
+                    ↓
+                    <div class="box model-box">
+                        <strong>Patch Embedding</strong><br>
+                        • 16×16 patches<br>
+                        • 196 total patches<br>
+                        • Linear projection
+                    </div>
+                    ↓
+                    <div class="box model-box">
+                        <strong>Transformer Encoder</strong><br>
+                        • Self-Attention<br>
+                        • Feed-Forward Networks<br>
+                        • Layer Normalization
+                    </div>
+                    ↓
+                    <div class="model-details">
+                        <div><span class="feature">vit_tiny_patch16_224:</span> <span class="params">5.9M params</span></div>
+                        <div><span class="feature">vit_small_patch16_224:</span> <span class="params">22M params</span></div>
+                        <div><span class="feature">deit_tiny_patch16_224:</span> <span class="params">5.9M params</span></div>
+                    </div>
+                    ↓
+                    <div class="box model-box">
+                        <strong>Transfer Learning</strong><br>
+                        • Freeze backbone<br>
+                        • Replace classification head<br>
+                        • Fine-tune on medical data
+                    </div>
+                </div>
+
+                <!-- YOLO Path -->
+                <div class="model-path yolo-path">
+                    <h3 style="color: #27ae60; text-align: center;">⚡ YOLO Classification</h3>
+                    
+                    <div class="box model-box">
+                        <strong>YOLOClassificationModel</strong><br>
+                        Adapted from detection
+                    </div>
+                    ↓
+                    <div class="box model-box">
+                        <strong>CSPDarknet Backbone</strong><br>
+                        • Convolutional layers<br>
+                        • Feature Pyramid Network<br>
+                        • Multi-scale processing
+                    </div>
+                    ↓
+                    <div class="box model-box">
+                        <strong>Feature Extraction</strong><br>
+                        • Bottleneck blocks<br>
+                        • Spatial attention<br>
+                        • Hierarchical features
+                    </div>
+                    ↓
+                    <div class="model-details">
+                        <div><span class="feature">YOLOv8n (nano):</span> <span class="params">3M params</span></div>
+                        <div><span class="feature">YOLOv8s (small):</span> <span class="params">11M params</span></div>
+                    </div>
+                    ↓
+                    <div class="box model-box">
+                        <strong>Classification Adaptation</strong><br>
+                        • Remove detection head<br>
+                        • Global pooling<br>
+                        • Add classifier layers
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Convergence -->
+            <div style="text-align: center; margin: 20px 0;">
+                <div class="arrow" style="font-size: 3em;">↓</div>
+                <div class="box eval-box" style="display: inline-block;">
+                    <strong>Binary Classification Output</strong><br>
+                    <span class="feature">FCD-II vs Healthy</span><br>
+                    2-class probability distribution
+                </div>
+            </div>
+        </div>
+
+        <!-- Training Pipeline -->
+        <div class="flow-section">
+            <h2 class="section-title">🏋️ Training Pipeline</h2>
+            <div class="flow-row">
+                <div class="box train-box">
+                    <strong>CrossValidationFramework</strong><br>
+                    • 3-Fold CV<br>
+                    • Stratified split<br>
+                    • 50 subjects per fold
+                </div>
+                <div class="arrow">→</div>
+                <div class="box train-box">
+                    <strong>AdvancedTrainer</strong><br>
+                    • Mixed precision<br>
+                    • Gradient clipping<br>
+                    • Early stopping<br>
+                    • Multiple optimizers
+                </div>
+                <div class="arrow">→</div>
+                <div class="box eval-box">
+                    <strong>ComprehensiveEvaluator</strong><br>
+                    • Accuracy, F1, ROC-AUC<br>
+                    • Confusion matrix<br>
+                    • Test-time augmentation
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Status -->
+        <div class="flow-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <h2 class="section-title" style="color: white; border-color: white;">🚀 Current Training Status</h2>
+            <div style="text-align: center; font-size: 1.2em;">
+                <div class="box" style="background: rgba(255,255,255,0.9); color: #333; margin: 20px auto; max-width: 600px;">
+                    <strong>vit_tiny_patch16_224 - Fold 1/3</strong><br>
+                    <span class="feature">Epoch 5: Train Acc: 75% | Val Acc: 75.76%</span><br>
+                    <span style="color: #27ae60;">✅ Successfully training with stable performance!</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
